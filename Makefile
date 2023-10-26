@@ -29,3 +29,9 @@ copy-to-vps:
 
 connect-to-vps:
 	ssh -i ${SSH_KEY_PATH} root@${SERVER_IP}
+
+copy-id-pub:
+	pbcopy < ~/.ssh/id_rsa_taiga.pub
+
+copy-id-private:
+	pbcopy < ~/.ssh/id_rsa_taiga
