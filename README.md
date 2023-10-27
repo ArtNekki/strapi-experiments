@@ -54,7 +54,3 @@ Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/
 ---
 
 <sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
-
-## ✨ Generate types
-https://docs.strapi.io/dev-docs/typescript#generate-typings-for-project-schemas
-npm run strapi ts:generate-types --debug
