@@ -33,6 +33,9 @@
         "preset": "toolbar"
       },
       "customField": "plugin::ckeditor5.CKEditor"
+    },
+    "price": {
+      "type": "float"
     }
   }
 }
