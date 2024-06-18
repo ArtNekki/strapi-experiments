@@ -75,5 +75,18 @@ export default factories.createCoreController('api::product.product', ({strapi})
     const sanitizedProduct = await this.sanitizeOutput(publicIfFound, ctx);
 
     return this.transformResponse(sanitizedProduct);
+  },
+
+  async likeProduct(ctx) {
+    const user = ctx.state.user;
+    const productId = ctx.params.id;
+    const { query} = ctx;
+
+    const updatedProduct = await strapi.service("api::product.product").likeProduct({
+      productId, userId: user.id, query
+    });
+
+    const sanitizedProduct = await this.sanitizeOutput(updatedProduct, ctx);
+    return this.transformResponse(sanitizedProduct);
   }
 }));
