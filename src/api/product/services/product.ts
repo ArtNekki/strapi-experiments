@@ -51,7 +51,6 @@ export default factories.createCoreService('api::product.product', ({strapi}) =>
       data: {
         likedBy: [...productToLike.likedBy, userId]
       },
-      populate: ['likedBy', 'authors'],
       ...query
     });
 
