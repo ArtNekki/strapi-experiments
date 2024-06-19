@@ -2,8 +2,24 @@
 // import { request } from "@octokit/request";
 const { request } = require("@octokit/request");
 const axios = require("axios");
+const md = require("markdown-it")();
 
 module.exports = ({ strapi }) => ({
+  getProjectForRepo: async (repo) => {
+    const {id} = repo;
+    const matchingProjects = await strapi.entityService
+      .findMany("plugin::github-projects.project", {
+        filters: {
+          repositoryId: id
+        }
+      });
+
+    console.log('matchingProjects', matchingProjects[0]);
+
+    if (matchingProjects.length == 1) return matchingProjects[0].id;
+    return null;
+  },
+
    getPublicRepos: async () => {
     const result = await request("GET /user/repos", {
       headers: {
@@ -23,7 +39,7 @@ module.exports = ({ strapi }) => ({
 
       try {
         const response = await axios.get(readmeUrl);
-        longDescription = response.data;
+        longDescription = md.render(response.data).replaceAll("\n", "<br />");
       } catch (error) {
         if (error.response && error.response.status === 404) {
           console.error(`README.md not found for project: ${name}`);
@@ -34,8 +50,24 @@ module.exports = ({ strapi }) => ({
         }
       }
 
-      return {id, name, shortDescription: description, url: html_url, longDescription};
+      const repo = {
+        id,
+        name,
+        shortDescription: description,
+        url: html_url, longDescription
+      };
 
+      const relatedProjectId = await strapi
+        .plugin("github-projects")
+        .service("getReposService")
+        .getProjectForRepo(repo);
+
+      console.log('relatedProjectId', relatedProjectId);
+
+      return {
+        ...repo,
+        projectId: relatedProjectId
+      }
     }));
   },
 });
