@@ -78,6 +78,7 @@ export default factories.createCoreController('api::product.product', ({strapi})
   },
 
   async likeProduct(ctx) {
+    console.log('product');
     const user = ctx.state.user;
     const productId = ctx.params.id;
     const { query} = ctx;
