@@ -16,7 +16,7 @@ export default {
       resolvers: {
         Mutation: {
           likeProduct: async (parent, args, ctx, info) => {
-            console.log('args', args);
+            console.log('mutation args', args);
 
             const {id: productId} = args;
             const userId = ctx.state.user.id;
@@ -24,11 +24,16 @@ export default {
               .service("api::product.product")
               .likeProduct({productId, userId});
 
+            console.log('wtf??? liked product', likedProduct);
+
             const { toEntityResponse } = strapi.plugin("graphql").service("format").returnTypes;
             const formattedResponse = toEntityResponse(likedProduct, {
               args,
               resourceUID: "api::product.product"
             });
+
+            console.log('mutation formatted response', formattedResponse);
+
 
             return formattedResponse;
           }
