@@ -13,7 +13,6 @@ instance.interceptors.request.use(
       'Content-Type': 'application/json',
     };
 
-    console.log('config', config)
     return config;
   },
   (error) => {
