@@ -4,8 +4,8 @@ module.exports = [
     path: '/repos',
     handler: 'getReposController.index',
     config: {
-      policies: [],
-      auth: false
+      policies: ["admin::isAuthenticatedAdmin"],
+      // auth: false
     },
   },
 ];
