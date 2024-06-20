@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { Table, Thead, Tbody, Tr, Td, Th } from '@strapi/design-system/Table';
 import { Box, Checkbox, Typography, Flex, IconButton, Alert, Loader, Link } from '@strapi/design-system';
-import { Pencil, Trash } from '@strapi/icons';
+import { Pencil, Trash, Plus } from '@strapi/icons';
 import axios from "../utils/axiosInstance";
 
 const COL_COUNT = 5;
@@ -33,7 +33,7 @@ const Repo = () => {
     </Alert>
   }
 
-  if (loading) return <Loader>Loading content...</Loader>
+  if (loading) return <Box marginLeft={'auto'} marginRight='auto'><Loader>Loading content...</Loader></Box>
 
   return (
     <Box padding={4} background="neutral100">
@@ -78,16 +78,23 @@ const Repo = () => {
                   </Typography>
                 </Td>
                 <Td>
-                  <Flex>
-                    <IconButton onClick={() => console.log('edit')} label="Edit" borderWidth={0}>
-                      <Pencil />
-                    </IconButton>
-                    <Box paddingLeft={1}>
-                      <IconButton onClick={() => console.log('delete')} label="Delete" borderWidth={0}>
-                        <Trash />
-                      </IconButton>
-                    </Box>
-                  </Flex>
+                  {
+                    projectId ?
+                      (
+                        <Flex>
+                          <Link to={`/content-manager/collectionType/plugin::github-projects.project/${projectId}`}>
+                            <IconButton onClick={() => console.log('edit')} label="Edit" borderWidth={0} icon={<Pencil />} />
+                          </Link>
+                          <Box paddingLeft={1}>
+                            <IconButton onClick={() => console.log('delete')} label="Delete" borderWidth={0} icon={<Trash />} />
+                          </Box>
+                        </Flex>
+                      ) : (
+                        <Box paddingLeft={1}>
+                          <IconButton onClick={() => console.log('delete')} label="Add" borderWidth={0} icon={<Plus />} />
+                        </Box>
+                      )
+                  }
                 </Td>
               </Tr>
             )

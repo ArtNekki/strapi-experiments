@@ -62,8 +62,6 @@ module.exports = ({ strapi }) => ({
         .service("getReposService")
         .getProjectForRepo(repo);
 
-      // console.log('relatedProjectId', relatedProjectId);
-
       return {
         ...repo,
         projectId: relatedProjectId
