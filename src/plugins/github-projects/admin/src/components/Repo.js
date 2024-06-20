@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Table, Thead, Tbody, Tr, Td, Th } from '@strapi/design-system/Table';
-import { Box, Checkbox, Typography, Flex, IconButton, Alert, Loader, Link } from '@strapi/design-system';
+import { Box, Checkbox, BaseCheckbox, Typography, Flex, IconButton, Alert, Loader, Link } from '@strapi/design-system';
 import { Pencil, Trash, Plus } from '@strapi/icons';
 import axios from "../utils/axiosInstance";
 
@@ -9,6 +9,10 @@ const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(undefined);
+  const [selectedRepos, setSelectedRepos] = useState([]);
+
+  const allChecked = selectedRepos.length === repos.length;
+  const isIndeterminate = selectedRepos.length > 0 && !allChecked;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,12 +40,16 @@ const Repo = () => {
   if (loading) return <Box marginLeft={'auto'} marginRight='auto'><Loader>Loading content...</Loader></Box>
 
   return (
-    <Box padding={4} background="neutral100">
+    <Box padding={8} background="neutral100">
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
             <Th>
-              <Checkbox aria-label="Select all entries" />
+              <BaseCheckbox
+                aria-label="Select all entries"
+                indeterminate={isIndeterminate}
+                onValueChange={value => value ? setSelectedRepos(repos.map(repo => repo.id)) : setSelectedRepos([])}
+                value={allChecked} />
             </Th>
             <Th>
               <Typography variant="sigma">Name</Typography>
@@ -64,7 +72,11 @@ const Repo = () => {
             return (
               <Tr key={id}>
                 <Td>
-                  <Checkbox aria-label={`Select ${id}`} />
+                  <Checkbox aria-label={`Select ${id}`} value={selectedRepos.includes(id)} onValueChange={(value) => {
+                    const newSelectedRepose = value
+                      ? [...selectedRepos, id] : selectedRepos.filter((item) => item !== id)
+                    setSelectedRepos(newSelectedRepose);
+                  }} />
                 </Td>
                 <Td>
                   <Typography textColor="neutral800">{name}</Typography>
