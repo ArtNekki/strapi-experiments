@@ -14,7 +14,7 @@ module.exports = ({ strapi }) => ({
         }
       });
 
-    console.log('matchingProjects', matchingProjects[0]);
+    // console.log('matchingProjects', matchingProjects[0]);
 
     if (matchingProjects.length == 1) return matchingProjects[0].id;
     return null;
@@ -33,7 +33,7 @@ module.exports = ({ strapi }) => ({
      return Promise.all(result.data.map(async (project) => {
       const {id, name, description, html_url, owner, default_branch} = project;
       const readmeUrl = `https://raw.githubusercontent.com/${owner.login}/${name}/${default_branch}/README.md`;
-      console.log('readmeUrl', readmeUrl);
+      // console.log('readmeUrl', readmeUrl);
 
       let longDescription = '';
 
@@ -62,7 +62,7 @@ module.exports = ({ strapi }) => ({
         .service("getReposService")
         .getProjectForRepo(repo);
 
-      console.log('relatedProjectId', relatedProjectId);
+      // console.log('relatedProjectId', relatedProjectId);
 
       return {
         ...repo,
