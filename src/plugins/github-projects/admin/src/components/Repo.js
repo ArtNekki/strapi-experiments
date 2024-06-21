@@ -3,6 +3,7 @@ import { Table, Thead, Tbody, Tr, Td, Th } from '@strapi/design-system/Table';
 import { Box, Checkbox, BaseCheckbox, Typography, Flex, IconButton, Alert, Loader, Link } from '@strapi/design-system';
 import { Pencil, Trash, Plus } from '@strapi/icons';
 import axios from "../utils/axiosInstance";
+import {ConfirmationDialog} from "./ConfirmationDialog";
 
 const COL_COUNT = 5;
 const Repo = () => {
@@ -10,6 +11,7 @@ const Repo = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRepos, setSelectedRepos] = useState([]);
   const [alert, setAlert] = useState(undefined)
+  const [deletingRepo, setDeletingRepo] = useState(undefined);
 
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked;
@@ -96,6 +98,14 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100" width="100%">
+      {deletingRepo && (
+        <ConfirmationDialog
+          visible={!!deletingRepo}
+          message='Are you sure you want to delete this?'
+          onClose={() => setDeletingRepo(undefined)}
+          onConfirm={() => deleteProject(deletingRepo)}
+        />
+      )}
       {alert && (
         <div style={{position: "absolute", top: 0, left: "15%", zIndex: 10}}>
           <Alert closeLabel="Close" title={alert.title} variant={alert.variant}>
@@ -160,7 +170,7 @@ const Repo = () => {
                             <IconButton onClick={() => console.log('edit')} label="Edit" borderWidth={0} icon={<Pencil />} />
                           </Link>
                           <Box paddingLeft={1}>
-                            <IconButton onClick={() => deleteProject(repo)} label="Delete" borderWidth={0} icon={<Trash />} />
+                            <IconButton onClick={() => setDeletingRepo(repo)} label="Delete" borderWidth={0} icon={<Trash />} />
                           </Box>
                         </Flex>
                       ) : (
