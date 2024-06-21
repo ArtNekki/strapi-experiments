@@ -26,4 +26,13 @@ module.exports = [
       // auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/projects',
+    handler: 'projectController.createAll',
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"],
+      // auth: false
+    },
+  },
 ];

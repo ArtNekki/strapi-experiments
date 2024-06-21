@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Button, Flex, Typography} from "@strapi/design-system";
-const BulkActions = ({selectedRepos}) => {
+const BulkActions = ({selectedRepos, createAction}) => {
   const reposWithoutProject = selectedRepos.filter((repo) => !repo.projectId);
   const reposWithProject = selectedRepos.filter((repo) => repo.projectId);
   const projectsToBeCreated = reposWithoutProject.length
@@ -17,7 +17,7 @@ const BulkActions = ({selectedRepos}) => {
             <Button
               size="S"
               variant="success-light"
-              onClick={() => console.log('Bulk create projects')}
+              onClick={() => createAction(reposWithoutProject)}
             >
               {`Create ${projectsToBeCreated} project(s)`}
             </Button>

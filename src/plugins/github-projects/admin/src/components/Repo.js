@@ -25,16 +25,32 @@ const Repo = () => {
     }, 5000)
   }
 
+  // const updateRepoAfterProjectCreation = (repo, project) => {
+  //   const updateRepos = (repos) => {
+  //     return repos.map((item) => {
+  //       return item.id !== repo.id ? item : {
+  //         ...item,
+  //         projectId: project.id
+  //       };
+  //     })
+  //   }
+  //
+  //   setRepos(updateRepos);
+  // }
+
+  const updateRepoAfterProjectCreation = (repo, project) => {
+    setRepos((repos) =>
+      repos.map((item) =>
+        item.id !== repo.id ? item : { ...item, projectId: project.id }
+      )
+    );
+  };
+
   const createProject = async (repo) => {
     const response = await axios.post('/github-projects/project', repo);
 
     if (response && response.data) {
-      setRepos(repos.map((item) => {
-        return item.id !== repo.id ? item : {
-          ...item,
-          projectId: response.data.id
-        };
-      }));
+      updateRepoAfterProjectCreation(repo, response.data);
 
       showAlert({
         title: "Project created",
@@ -48,6 +64,35 @@ const Repo = () => {
         variant: "danger"
       })
     }
+  }
+
+  const createAllProjects = async (reposToBecomeProjects) => {
+    const projects = await axios.post("/github-projects/projects", {
+      repos: reposToBecomeProjects
+    });
+
+    if(projects && projects.data) {
+        projects.data.forEach((project)=> {
+          const repo = reposToBecomeProjects.find((repo) => project.repositoryId == repo.id);
+
+          updateRepoAfterProjectCreation(repo, project);
+        });
+
+      showAlert({
+        title: "All Projects created",
+        text: `Successfully created`,
+        variant: "success"
+      })
+
+    } else {
+      showAlert({
+        title: "Project is not created",
+        text: `Oops something wrong, please retry`,
+        variant: "danger"
+      })
+    }
+
+    setSelectedRepos([]);
   }
 
   const deleteProject = async (repo) => {
@@ -108,6 +153,7 @@ const Repo = () => {
       )}
       {selectedRepos.length > 0 &&  <BulkActions
         selectedRepos={selectedRepos.map((repoId) => repos.find((repo) => repo.id == repoId))}
+        createAction={createAllProjects}
       />}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>

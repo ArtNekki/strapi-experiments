@@ -14,6 +14,17 @@ module.exports = ({strapi}) => ({
     return newProject;
   },
 
+  createAll: async (ctx) => {
+    const repos = ctx.request.body;
+
+    const createdProjects = strapi
+      .plugin("github-projects")
+      .service("projectService")
+      .createAll(repos, ctx.state.user.id);
+
+    return createdProjects;
+  },
+
   delete: async (ctx) => {
     const {id} = ctx.params;
 
