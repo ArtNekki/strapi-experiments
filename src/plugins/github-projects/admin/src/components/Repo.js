@@ -8,15 +8,43 @@ const COL_COUNT = 5;
 const Repo = () => {
   const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(undefined);
   const [selectedRepos, setSelectedRepos] = useState([]);
+  const [alert, setAlert] = useState(undefined)
 
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked;
 
+  const showAlert = (alert) => {
+    setAlert(alert);
+
+    setTimeout(() => {
+      setAlert(undefined);
+    }, 5000)
+  }
+
   const createProject = async (repo) => {
     const response = await axios.post('/github-projects/project', repo);
-    console.log('response', response);
+
+    if (response && response.data) {
+      setRepos(repos.map((item) => {
+        return item.id !== repo.id ? item : {
+          ...item,
+          projectId: response.data.id
+        };
+      }));
+
+      showAlert({
+        title: "Project created",
+        text: `Successfully created ${response.data.title}`,
+        variant: "success"
+      })
+    } else {
+      showAlert({
+        title: "Error occured",
+        text: `Oops something wrong, please retry`,
+        variant: "danger"
+      })
+    }
   }
 
   useEffect(() => {
@@ -27,7 +55,11 @@ const Repo = () => {
         const result = await axios.get('/github-projects/repos');
         setRepos(result.data);
       } catch (error) {
-        setError(error);
+        showAlert({
+          title: "Error fetching repositories",
+          text: error.toString(),
+          variant: "danger"
+        })
       } finally {
         setLoading(false);
       }
@@ -36,16 +68,17 @@ const Repo = () => {
     fetchData();
   }, []);
 
-  if (error) {
-    return <Alert closeLabel="Close" title="Error fetching repositories" variant="danger">
-      {error.toString()}
-    </Alert>
-  }
-
   if (loading) return <Box marginLeft={'auto'} marginRight='auto'><Loader>Loading content...</Loader></Box>
 
   return (
     <Box padding={8} background="neutral100" width="100%">
+      {alert && (
+        <div style={{position: "absolute", top: 0, left: "15%", zIndex: 10}}>
+          <Alert closeLabel="Close" title={alert.title} variant={alert.variant}>
+            {alert.text}
+          </Alert>
+        </div>
+      )}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
