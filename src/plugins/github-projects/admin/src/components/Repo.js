@@ -4,6 +4,7 @@ import { Box, Checkbox, BaseCheckbox, Typography, Flex, IconButton, Alert, Loade
 import { Pencil, Trash, Plus } from '@strapi/icons';
 import axios from "../utils/axiosInstance";
 import {ConfirmationDialog} from "./ConfirmationDialog";
+import BulkActions from "./BulkActions";
 
 const COL_COUNT = 5;
 const Repo = () => {
@@ -98,14 +99,6 @@ const Repo = () => {
 
   return (
     <Box padding={8} background="neutral100" width="100%">
-      {deletingRepo && (
-        <ConfirmationDialog
-          visible={!!deletingRepo}
-          message='Are you sure you want to delete this?'
-          onClose={() => setDeletingRepo(undefined)}
-          onConfirm={() => deleteProject(deletingRepo)}
-        />
-      )}
       {alert && (
         <div style={{position: "absolute", top: 0, left: "15%", zIndex: 10}}>
           <Alert closeLabel="Close" title={alert.title} variant={alert.variant}>
@@ -113,6 +106,9 @@ const Repo = () => {
           </Alert>
         </div>
       )}
+      {selectedRepos.length > 0 &&  <BulkActions
+        selectedRepos={selectedRepos.map((repoId) => repos.find((repo) => repo.id == repoId))}
+      />}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
@@ -185,6 +181,14 @@ const Repo = () => {
         })}
         </Tbody>
       </Table>
+      {deletingRepo && (
+        <ConfirmationDialog
+          visible={!!deletingRepo}
+          message='Are you sure you want to delete this?'
+          onClose={() => setDeletingRepo(undefined)}
+          onConfirm={() => deleteProject(deletingRepo)}
+        />
+      )}
     </Box>
   )
 }
