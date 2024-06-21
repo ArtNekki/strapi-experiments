@@ -39,5 +39,5 @@ copy-id-private:
 remove-dev-image:
 	docker rmi ${DOCKER_USERNAME}/${PROJECT_NAME}:dev
 
-develop-plugin:
+plugin:
 	NODE_ENV=local strapi develop --watch-admin

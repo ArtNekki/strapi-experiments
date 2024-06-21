@@ -47,6 +47,30 @@ const Repo = () => {
     }
   }
 
+  const deleteProject = async (repo) => {
+    const response = await axios.delete(`/github-projects/project/${repo.projectId}`);
+
+    if (response && response.data) {
+      setRepos(repos.map((item) => item.id !== repo.id ? item : {
+        ...item,
+        projectId: null
+      }))
+
+      showAlert({
+        title: "Project deleted",
+        text: `Successfully deleted ${response.data.title}`,
+        variant: "warning"
+      })
+    } else {
+      showAlert({
+        title: "Oops, error",
+        text: `Project's deletion failed`,
+        variant: "danger"
+      })
+    }
+
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -136,7 +160,7 @@ const Repo = () => {
                             <IconButton onClick={() => console.log('edit')} label="Edit" borderWidth={0} icon={<Pencil />} />
                           </Link>
                           <Box paddingLeft={1}>
-                            <IconButton onClick={() => console.log('delete')} label="Delete" borderWidth={0} icon={<Trash />} />
+                            <IconButton onClick={() => deleteProject(repo)} label="Delete" borderWidth={0} icon={<Trash />} />
                           </Box>
                         </Flex>
                       ) : (

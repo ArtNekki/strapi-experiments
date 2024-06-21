@@ -16,5 +16,9 @@ module.exports = ({strapi}) => ({
       })
 
     return newProject;
+  },
+
+  delete: async (id) => {
+    return await strapi.entityService.delete("plugin::github-projects.project", id);
   }
 })
