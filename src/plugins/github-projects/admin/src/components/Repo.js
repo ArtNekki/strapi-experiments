@@ -14,6 +14,11 @@ const Repo = () => {
   const allChecked = selectedRepos.length === repos.length;
   const isIndeterminate = selectedRepos.length > 0 && !allChecked;
 
+  const createProject = async (repo) => {
+    const response = await axios.post('/github-projects/project', repo);
+    console.log('response', response);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -40,7 +45,7 @@ const Repo = () => {
   if (loading) return <Box marginLeft={'auto'} marginRight='auto'><Loader>Loading content...</Loader></Box>
 
   return (
-    <Box padding={8} background="neutral100">
+    <Box padding={8} background="neutral100" width="100%">
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>
           <Tr>
@@ -103,7 +108,7 @@ const Repo = () => {
                         </Flex>
                       ) : (
                         <Box paddingLeft={1}>
-                          <IconButton onClick={() => console.log('delete')} label="Add" borderWidth={0} icon={<Plus />} />
+                          <IconButton onClick={() => createProject(repo)} label="Add" borderWidth={0} icon={<Plus />} />
                         </Box>
                       )
                   }
