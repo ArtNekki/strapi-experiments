@@ -87,4 +87,20 @@ module.exports = [
       // auth: false
     },
   },
+  {
+    method: 'GET',
+    path: '/projects',
+    handler: 'projectController.find',
+    config: {
+      auth: false
+    },
+  },
+  {
+    method: 'GET',
+    path: '/projects/:id',
+    handler: 'projectController.findOne',
+    config: {
+      auth: false
+    },
+  },
 ];
