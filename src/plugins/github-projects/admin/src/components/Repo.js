@@ -25,7 +25,7 @@ const Repo = () => {
     }, 5000)
   }
 
-  // const updateRepoAfterProjectCreation = (repo, project) => {
+  // const updateRepoAfterProjectCreated = (repo, project) => {
   //   const updateRepos = (repos) => {
   //     return repos.map((item) => {
   //       return item.id !== repo.id ? item : {
@@ -38,10 +38,18 @@ const Repo = () => {
   //   setRepos(updateRepos);
   // }
 
-  const updateRepoAfterProjectCreation = (repo, project) => {
+  const updateRepoAfterProjectCreated = (repo, project) => {
     setRepos((repos) =>
       repos.map((item) =>
         item.id !== repo.id ? item : { ...item, projectId: project.id }
+      )
+    );
+  };
+
+  const updateRepoAfterProjectDeleted = (repo) => {
+    setRepos((repos) =>
+      repos.map((item) =>
+        item.id !== repo.id ? item : { ...item, projectId: null }
       )
     );
   };
@@ -50,7 +58,7 @@ const Repo = () => {
     const response = await axios.post('/github-projects/project', repo);
 
     if (response && response.data) {
-      updateRepoAfterProjectCreation(repo, response.data);
+      updateRepoAfterProjectCreated(repo, response.data);
 
       showAlert({
         title: "Project created",
@@ -75,7 +83,7 @@ const Repo = () => {
         projects.data.forEach((project)=> {
           const repo = reposToBecomeProjects.find((repo) => project.repositoryId == repo.id);
 
-          updateRepoAfterProjectCreation(repo, project);
+          updateRepoAfterProjectCreated(repo, project);
         });
 
       showAlert({
@@ -86,7 +94,7 @@ const Repo = () => {
 
     } else {
       showAlert({
-        title: "Project is not created",
+        title: "Projects is not created",
         text: `Oops something wrong, please retry`,
         variant: "danger"
       })
@@ -99,10 +107,8 @@ const Repo = () => {
     const response = await axios.delete(`/github-projects/project/${repo.projectId}`);
 
     if (response && response.data) {
-      setRepos(repos.map((item) => item.id !== repo.id ? item : {
-        ...item,
-        projectId: null
-      }))
+
+      updateRepoAfterProjectDeleted(repo);
 
       showAlert({
         title: "Project deleted",
@@ -116,7 +122,34 @@ const Repo = () => {
         variant: "danger"
       })
     }
+  }
 
+  const deleteAllProjects = async (reposToDelete) => {
+    const projects = await axios.post("/github-projects/delete-projects", {
+      repos: reposToDelete
+    });
+
+    if(projects && projects.data) {
+      projects.data.forEach((project) => {
+        const repo = reposToDelete.find((repo) => project.repositoryId == repo.id);
+
+        updateRepoAfterProjectDeleted(repo);
+      });
+
+      showAlert({
+        title: "All Projects deleted",
+        text: `Successfully deleted`,
+        variant: "success"
+      })
+    } else {
+      showAlert({
+        title: "Projects is not deleted",
+        text: `Oops something wrong, please retry`,
+        variant: "danger"
+      })
+    }
+
+    setSelectedRepos([]);
   }
 
   useEffect(() => {
@@ -154,6 +187,7 @@ const Repo = () => {
       {selectedRepos.length > 0 &&  <BulkActions
         selectedRepos={selectedRepos.map((repoId) => repos.find((repo) => repo.id == repoId))}
         createAction={createAllProjects}
+        deleteAction={deleteAllProjects}
       />}
       <Table colCount={COL_COUNT} rowCount={repos.length}>
         <Thead>

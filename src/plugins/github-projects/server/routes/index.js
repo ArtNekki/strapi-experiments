@@ -35,4 +35,13 @@ module.exports = [
       // auth: false
     },
   },
+  {
+    method: 'POST',
+    path: '/delete-projects',
+    handler: 'projectController.deleteAll',
+    config: {
+      policies: ["admin::isAuthenticatedAdmin"],
+      // auth: false
+    },
+  },
 ];

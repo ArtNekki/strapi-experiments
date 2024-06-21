@@ -31,5 +31,15 @@ module.exports = ({strapi}) => ({
 
   delete: async (id) => {
     return await strapi.entityService.delete("plugin::github-projects.project", id);
+  },
+
+  deleteAll: async ({repos}) => {
+    const deletedProjects = repos.map(async (repo) => await strapi
+      .plugin("github-projects")
+      .service("projectService")
+      .delete(repo.projectId)
+    );
+
+    return Promise.all(deletedProjects);
   }
 })

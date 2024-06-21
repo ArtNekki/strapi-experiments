@@ -1,6 +1,6 @@
 import React from 'react';
 import {Box, Button, Flex, Typography} from "@strapi/design-system";
-const BulkActions = ({selectedRepos, createAction}) => {
+const BulkActions = ({selectedRepos, createAction, deleteAction}) => {
   const reposWithoutProject = selectedRepos.filter((repo) => !repo.projectId);
   const reposWithProject = selectedRepos.filter((repo) => repo.projectId);
   const projectsToBeCreated = reposWithoutProject.length
@@ -29,7 +29,7 @@ const BulkActions = ({selectedRepos, createAction}) => {
               <Button
                 size="S"
                 variant="danger-light"
-                onClick={() => console.log('Bulk delete projects')}
+                onClick={() => deleteAction(reposWithProject)}
               >
                 {`Delete ${projectsToBeDeleted} project(s)`}
               </Button>

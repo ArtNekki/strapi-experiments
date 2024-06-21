@@ -25,6 +25,17 @@ module.exports = ({strapi}) => ({
     return createdProjects;
   },
 
+  deleteAll: async (ctx) => {
+    const repos = ctx.request.body;
+
+    const deletedProjects = await strapi
+      .plugin("github-projects")
+      .service("projectService")
+      .deleteAll(repos);
+
+    return deletedProjects;
+  },
+
   delete: async (ctx) => {
     const {id} = ctx.params;
 
