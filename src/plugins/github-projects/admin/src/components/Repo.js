@@ -55,101 +55,105 @@ const Repo = () => {
   };
 
   const createProject = async (repo) => {
-    const response = await axios.post('/github-projects/project', repo);
+    axios.post('/github-projects/project', repo)
+      .then((response) => {
+        updateRepoAfterProjectCreated(repo, response.data);
 
-    if (response && response.data) {
-      updateRepoAfterProjectCreated(repo, response.data);
+        showAlert({
+          title: "Project created",
+          text: `Successfully created ${response.data.title}`,
+          variant: "success"
+        })
+      })
+      .catch((error) => {
+        showAlert({
+          title: "Error",
+          text: `You haven't permission for project creation`,
+          variant: "danger"
+        })
 
-      showAlert({
-        title: "Project created",
-        text: `Successfully created ${response.data.title}`,
-        variant: "success"
-      })
-    } else {
-      showAlert({
-        title: "Error occured",
-        text: `Oops something wrong, please retry`,
-        variant: "danger"
-      })
-    }
+        console.error(error.toString())
+      });
   }
 
-  const createAllProjects = async (reposToBecomeProjects) => {
-    const projects = await axios.post("/github-projects/projects", {
+  const createAllProjects = (reposToBecomeProjects) => {
+    axios.post("/github-projects/projects", {
       repos: reposToBecomeProjects
-    });
-
-    if(projects && projects.data) {
+    })
+      .then((projects) => {
         projects.data.forEach((project)=> {
           const repo = reposToBecomeProjects.find((repo) => project.repositoryId == repo.id);
 
           updateRepoAfterProjectCreated(repo, project);
         });
 
-      showAlert({
-        title: "All Projects created",
-        text: `Successfully created`,
-        variant: "success"
+        showAlert({
+          title: "All Projects created",
+          text: `Successfully created`,
+          variant: "success"
+        })
       })
+      .catch((error) => {
+        showAlert({
+          title: "Error",
+          text: `You haven't permission for projects creation`,
+          variant: "danger"
+        })
 
-    } else {
-      showAlert({
-        title: "Projects is not created",
-        text: `Oops something wrong, please retry`,
-        variant: "danger"
+        console.error(error.toString())
       })
-    }
-
-    setSelectedRepos([]);
+      .finally(() => setSelectedRepos([]));
   }
 
-  const deleteProject = async (repo) => {
-    const response = await axios.delete(`/github-projects/project/${repo.projectId}`);
-
-    if (response && response.data) {
-
-      updateRepoAfterProjectDeleted(repo);
-
-      showAlert({
-        title: "Project deleted",
-        text: `Successfully deleted ${response.data.title}`,
-        variant: "warning"
-      })
-    } else {
-      showAlert({
-        title: "Oops, error",
-        text: `Project's deletion failed`,
-        variant: "danger"
-      })
-    }
-  }
-
-  const deleteAllProjects = async (reposToDelete) => {
-    const projects = await axios.post("/github-projects/delete-projects", {
-      repos: reposToDelete
-    });
-
-    if(projects && projects.data) {
-      projects.data.forEach((project) => {
-        const repo = reposToDelete.find((repo) => project.repositoryId == repo.id);
-
+  const deleteProject = (repo) => {
+    axios.delete(`/github-projects/project/${repo.projectId}`)
+      .then((response) => {
         updateRepoAfterProjectDeleted(repo);
+
+        showAlert({
+          title: "Project deleted",
+          text: `Successfully deleted ${response.data.title}`,
+          variant: "warning"
+        })
+      })
+      .catch((error) => {
+        showAlert({
+          title: "Error",
+          text: `You haven't permission for project deletion`,
+          variant: "danger"
+        })
+
+        console.error(error.toString())
       });
+  }
 
-      showAlert({
-        title: "All Projects deleted",
-        text: `Successfully deleted`,
-        variant: "success"
-      })
-    } else {
-      showAlert({
-        title: "Projects is not deleted",
-        text: `Oops something wrong, please retry`,
-        variant: "danger"
-      })
-    }
+  const deleteAllProjects = (reposToDelete) => {
+    axios.post("/github-projects/delete-projects", {
+      repos: reposToDelete
+    })
+      .then((projects) => {
+        projects.data.forEach((project) => {
+          const repo = reposToDelete.find((repo) => project.repositoryId == repo.id);
 
-    setSelectedRepos([]);
+          updateRepoAfterProjectDeleted(repo);
+        });
+
+        showAlert({
+          title: "All Projects deleted",
+          text: `Successfully deleted`,
+          variant: "success"
+        })
+      })
+      .catch((error) => {
+        showAlert({
+          title: "Error",
+          text: `You haven't permission for projects deletion`,
+          variant: "danger"
+        })
+
+        console.error(error.toString())
+      })
+      .finally(() => setSelectedRepos([]));
   }
 
   useEffect(() => {
