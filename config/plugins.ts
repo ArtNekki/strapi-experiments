@@ -50,9 +50,4 @@ module.exports = ({ env }) => ({
     seo: {
         enabled: true,
     },
-    'github-projects': {
-      enabled: true,
-      resolve: './src/plugins/github-projects'
-    },
-
 });
